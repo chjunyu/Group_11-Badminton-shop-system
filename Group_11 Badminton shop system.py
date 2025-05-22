@@ -1907,7 +1907,7 @@ def userReceipt(purchase_id, purchase_by, total_price, cart):
     input("\nPress Enter to return...")
     userMenu()
 
-#--------------------------------------------------------------
+#---------------------------------------------------------------
 #main menu first page
 def main():
     while True:    
