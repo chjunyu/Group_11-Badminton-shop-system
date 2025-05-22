@@ -730,3 +730,332 @@ def viewAllRecommendations():
         superadminMenu()
     else:
         adminMenu()
+
+def viewCustomer():
+    print("\n=== View Customers ===")
+    try:
+        with open("users.txt", "r") as f:
+            users = [line.strip().split(",") for line in f]
+    except FileNotFoundError:
+        print("No customers found!")
+        time.sleep(2)
+        superadminMenu()
+        return
+
+    print(f"\nTotal users: {len(users)}\n")
+    print("ID  Username")
+    print("------------")
+    for u in users:
+        print(f"{u[0]:<3} {u[1]}")
+
+    input("\nPress Enter to continue...")
+    time.sleep(2)
+    superadminMenu()
+
+def adminadduser():
+    # Username validation (3 attempts)
+    for attempt in range(3):
+        username = input("\nEnter username: " if attempt == 0 else "Enter a new username: ").strip()
+        if not checkRepeatingName(username):
+            break
+        remaining = 2 - attempt
+        if remaining > 0:
+            print(f"{remaining} attempt(s) left.")
+    else:
+        print("Too many failed attempts. Registration aborted.")
+        time.sleep(2)
+        superadminMenu()
+        return
+
+    # Password validation (3 attempts)
+    for attempt in range(3):
+        password = input("Enter password (min 8 characters): ").strip()
+        if len(password) < 8:
+            print("Password must be at least 8 characters.")
+            remaining = 2 - attempt
+            if remaining > 0:
+                print(f"{remaining} attempt(s) left.")
+            continue
+        confirm = input("Confirm password: ").strip()
+        if password == confirm:
+            admin_register(username, password)
+            return
+        else:
+            print("Passwords do not match.")
+            remaining = 2 - attempt
+            if remaining > 0:
+                print(f"{remaining} attempt(s) left.")
+
+    print("Too many failed attempts. Registration aborted.")
+    time.sleep(2)
+    superadminMenu()
+
+def checkRepeatingName(username):
+    try:
+        with open("users.txt", "r") as file:
+            for line in file:
+                parts = line.strip().split(",")
+                if len(parts) >= 2 and parts[1].strip() == username:
+                    print("Username already exists")
+                    return True
+    except FileNotFoundError:
+        return False
+    return False
+
+def admin_register(username, password):
+    user_id = getNextUserId()
+    with open("users.txt", "a", newline="\n") as file:
+        file.write(f"{user_id},{username},{password}\n")
+    print("\nAccount created successfully")
+    time.sleep(2)
+    superadminMenu()
+
+
+def addStaff():
+    print("\n=== Add New Staff ===")
+
+    # Generate new staff ID
+    new_id = get_next_id("admins.txt")
+
+    # Get existing usernames to avoid duplicates
+    existing = []
+    try:
+        with open("admins.txt", "r") as f:
+            existing = [line.strip().split(",")[1] for line in f]
+    except FileNotFoundError:
+        pass  # It's okay if the file doesn't exist yet
+
+    while True:
+        username = input("Enter staff username: ").strip()
+        if username in existing:
+            print("Username already exists!")
+        else:
+            break
+
+    # Password entry with validation and retry logic
+    for attempt in range(3):
+        password = input("Enter password (min 8 characters): ").strip()
+        if len(password) < 8:
+            print("Password must be at least 8 characters.")
+            remaining = 2 - attempt
+            if remaining > 0:
+                print(f"{remaining} attempt(s) left.")
+            time.sleep(1)
+            continue
+
+        confirm = input("Confirm password: ").strip()
+        if password == confirm:
+            # Save to file if password is valid and confirmed
+            with open("admins.txt", "a") as f:
+                f.write(f"{new_id},{username},{password}\n")
+            print("Staff added successfully!")
+            time.sleep(2)
+            superadminMenu()
+            return
+        else:
+            print("Passwords do not match.")
+            remaining = 2 - attempt
+            if remaining > 0:
+                print(f"{remaining} attempt(s) left.")
+            time.sleep(1)
+
+    print("Too many failed attempts. Registration aborted.")
+    time.sleep(2)
+    superadminMenu()
+
+def deleteStaff():
+    print("\n=== Delete Staff ===")
+    try:
+        with open("admins.txt", "r") as f:
+            staffs = [line.strip().split(",") for line in f]
+    except FileNotFoundError:
+        print("No staff found!")
+        time.sleep(2)
+        superadminMenu()
+        return
+
+    print("\nID  Username")
+    print("------------")
+    for s in staffs:
+        print(f"{s[0]:<3} {s[1]}")
+
+    while True:
+        sid = input("\nEnter staff ID to delete (0 to cancel): ").strip()
+        if sid == "0":
+            superadminMenu()
+            return
+        if any(s[0] == sid for s in staffs):
+            break
+        print("Invalid ID! Try again.")
+
+    confirm = input("Are you sure you want to delete this staff? (y/n): ").lower()
+    if confirm != "y":
+        print("Deletion cancelled.")
+        time.sleep(2)
+        superadminMenu()
+        return
+
+    with open("admins.txt", "w") as f:
+        for s in staffs:
+            if s[0] != sid:
+                f.write(",".join(s) + "\n")
+
+    print("Staff deleted successfully!")
+    time.sleep(2)
+    superadminMenu()
+
+def viewStaff():
+    print("\n=== View Staff ===")
+    try:
+        with open("admins.txt", "r") as f:
+            staffs = [line.strip().split(",") for line in f]
+    except FileNotFoundError:
+        print("No staff found!")
+        time.sleep(2)
+        superadminMenu()
+        return
+
+    print("\nID  Username")
+    print("------------")
+    for s in staffs:
+        print(f"{s[0]:<3} {s[1]}")
+    
+    input("\nPress Enter to continue...")
+    superadminMenu()
+
+
+def salesReport():
+    print("\n=== Sales Report ===")
+    today_str = datetime.now().strftime("%d/%m/%Y")
+
+    try:
+        with open("purchases.txt", "r") as f:
+            lines = f.readlines()
+            if len(lines) <= 1:
+                print("No sales records found!")
+                time.sleep(2)
+                return superadminMenu() if current_admin == "super_admin" else adminMenu()
+            purchases = [line.strip().split(",") for line in lines[1:] if line.strip()]
+    except FileNotFoundError:
+        print("No sales records found!")
+        time.sleep(2)
+        return superadminMenu() if current_admin == "super_admin" else adminMenu()
+
+    # Load user ID to name mapping
+    user_map = {}
+    try:
+        with open("user.txt", "r") as f:
+            user_lines = f.readlines()[1:]  # Skip header
+            for line in user_lines:
+                parts = line.strip().split(",")
+                if len(parts) >= 2:
+                    user_map[parts[0]] = parts[1]
+    except FileNotFoundError:
+        pass
+
+    # Load product ID to name mapping
+    product_map = {}
+    try:
+        with open("products.txt", "r") as f:
+            product_lines = f.readlines()[1:]  # Skip header
+            for line in product_lines:
+                parts = line.strip().split(",")
+                if len(parts) >= 2:
+                    product_map[parts[0]] = parts[1].replace("_", " ")
+    except FileNotFoundError:
+        pass
+
+    # Initialize totals
+    total_revenue = 0
+    today_sales_volume = 0
+    today_sales_quantity = 0
+    today_products = {}
+    all_products = {}
+
+    recent_transactions = purchases[-10:]
+
+    # Process purchases
+    for p in purchases:
+        try:
+            purchase_id = p[0]
+            user_id = p[1]
+            product_id = p[2]
+            quantity = int(p[3])
+            total_price = float(p[4])
+            method = p[5]
+            date = p[6]
+        except (IndexError, ValueError):
+            continue
+
+        total_revenue += total_price
+
+        # For today's sales
+        if date == today_str:
+            today_sales_volume += total_price
+            today_sales_quantity += quantity
+            if product_id in today_products:
+                today_products[product_id]["qty"] += quantity
+                today_products[product_id]["total"] += total_price
+            else:
+                today_products[product_id] = {
+                    "name": product_map.get(product_id, "Unknown"),
+                    "qty": quantity,
+                    "total": total_price
+                }
+
+        # All-time product stats
+        if product_id in all_products:
+            all_products[product_id]["qty"] += quantity
+            all_products[product_id]["total"] += total_price
+        else:
+            all_products[product_id] = {
+                "name": product_map.get(product_id, "Unknown"),
+                "qty": quantity,
+                "total": total_price
+            }
+
+    # Show today's sales
+    print(f"\nToday's Sales Quantity: {today_sales_quantity}")
+    print(f"Today's Sales Volume:   RM{today_sales_volume:.2f}")
+
+    if today_products:
+        print("\nProducts Sold Today:")
+        print("ID  Name                                Qty  Total")
+        print("-----------------------------------------------------")
+        for pid in sorted(today_products.keys()):
+            info = today_products[pid]
+            print(f"{pid:<4}{info['name']:<35}{info['qty']:<5}RM{info['total']:.2f}")
+    else:
+        print("\nNo products were sold today.")
+
+    # Show total revenue and product sales
+    print(f"\nTotal Revenue: RM{total_revenue:.2f}")
+    print("\nAll-Time Product Sales:")
+    print("ID  Name                                Qty  Total")
+    print("-----------------------------------------------------")
+    for pid in sorted(all_products.keys()):
+        info = all_products[pid]
+        print(f"{pid:<4}{info['name']:<35}{info['qty']:<5}RM{info['total']:.2f}")
+
+    input("\nPress Enter to return...")
+    return superadminMenu() if current_admin == "super_admin" else adminMenu()
+
+
+#-----------------------------------------------------------------------------------
+#About Us
+def aboutUs():
+    clear_screen()
+    print("\n===============================================")
+    print("===== Badminton Sport Equipment System =======")
+    print("==============================================")
+    print("================== About Us ==================")
+    print("==============================================")
+    print("Group 11 Badminton Sport Equipment System")
+    print("1. Chan Jun Yu    (1221208634)")
+    print("2. Hwang Yong Jin (1221207893)")
+    print("3. Soh Yong Seng  (1221207836)")
+    print("4. Tan Chun Hoong (1221207498)")
+    input("\nPress Enter to continue...")
+    main()
+
+#about us finish
