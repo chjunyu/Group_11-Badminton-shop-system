@@ -317,7 +317,7 @@ def superadminMenu():
     print("| 2. Edit Equipment                  |")
     print("| 3. Delete Equipment                |")
     print("| 4. View Equipment                  |")
-    print("| 5. Product comment                 |")
+    print("| 5. Product Comment                 |")
     print("+------------------------------------+")
     print("| User                               |")
     print("+------------------------------------+")
@@ -346,7 +346,7 @@ def superadminMenu():
     elif choice == "4":
         viewEquipment()
     elif choice == "5":
-        viewAllRecommendations()
+        viewAllComment()
     elif choice == "6":
         viewCustomer()
     elif choice == "7":
@@ -401,7 +401,7 @@ def adminMenu():
     elif choice == "4":
         viewEquipment()
     elif choice == "5":
-        viewAllRecommendations()
+        viewAllComment()
     elif choice == "6":
         salesReport()
     elif choice == "7":
@@ -439,15 +439,15 @@ def addEquipment():
     color = input("Enter color: ")
 
     print("1. Racket")
-    print("2. Shuttlecocks")
+    print("2. Shuttlecock")
     print("3. Badminton_Bag")
-    print("4. Racket_Grips")
+    print("4. Racket_Grip")
 
     category_map = {
         "1": "Racket",
-        "2": "Shuttlecocks",
+        "2": "Shuttlecock",
         "3": "Badminton_Bag",
-        "4": "Racket_Grips"
+        "4": "Racket_Grip"
     }
 
     while True:
@@ -671,8 +671,8 @@ def viewEquipment():
     else:
         adminMenu()
 
-def viewAllRecommendations():
-    print("\n===== All Product comment =====\n")
+def viewAllComment():
+    print("\n===== All Product Comment =====\n")
 
     # Load user_id → username
     user_map = {}
@@ -698,24 +698,24 @@ def viewAllRecommendations():
         print("products.txt not found!")
         return
 
-    # Load recommendations and sort by product_id
+    # Load comment and sort by product_id
     try:
-        with open("recommendation.txt", "r") as f:
-            recommendations = [line.strip().split(",", 3) for line in f]
+        with open("comment.txt", "r") as f:
+            comment = [line.strip().split(",", 3) for line in f]
     except FileNotFoundError:
-        print("recommendation.txt not found!")
+        print("comment.txt not found!")
         return
 
-    if not recommendations:
-        print("No recommendations available.")
+    if not comment:
+        print("No comment available.")
         return
 
-    # Sort recommendations by product_id (as integer)
-    recommendations.sort(key=lambda x: int(x[2]))
+    # Sort comment by product_id (as integer)
+    comment.sort(key=lambda x: int(x[2]))
 
     # Display grouped by product_id
     current_product_id = None
-    for rec_id, user_id, product_id, comment in recommendations:
+    for rec_id, user_id, product_id, comment in comment:
         if product_id != current_product_id:
             current_product_id = product_id
             product_name = product_map.get(product_id, f"Unknown Product {product_id}")
@@ -1059,6 +1059,8 @@ def aboutUs():
     main()
 
 #about us finish
+#-----------------------------------------------------------------------------------
+
 def userMenu():
     clear_screen()
     global current_user
@@ -1067,9 +1069,9 @@ def userMenu():
     print("===============================================")
     print("1. Search Equipment (All)")
     print("2. Search Equipment (by category)")
-    print("3. Product Comment") #by recomandation from Product Recommender(system) no feedback
+    print("3. Product Comment") #by recomandation from Product Comment(system) no feedback
     print("4. Puchase History")
-    print("5. Provide Comment")
+    print("5. Provide recomandation")
     print("6. Edit Profile")
     print("7. Delete Account")
     print("8. Logout")
@@ -1080,11 +1082,11 @@ def userMenu():
     elif choice == "2":
         searchbyCategoryMenu()
     elif choice == "3":
-        productRecommendation()
+        productComment()
     elif choice == "4":
         purchaseHistory()
     elif choice == "5":
-        provideRecommendation()
+        provideComment()
     elif choice == "6":
         editProfile()
     elif choice == "7":
@@ -1096,6 +1098,7 @@ def userMenu():
         main()
     else:
         print("Invalid choice")
+        time.sleep(2)
         userMenu()
 
 #1
@@ -1145,9 +1148,9 @@ def searchAllEquipmentMenu():
             return
 
         print("\nAll Available Products:")
-        print(f"{'ID':<5}{'Name':<30}{'Category':<15}{'Price':<10}Stock")
+        print(f"{'ID':<5}{'Name':<35}{'Category':<15}{'Price':<10}Stock")
         for p in products:
-            print(f"{p['id']:<5}{p['name']:<30}{p['category']:<15}RM{p['price']:<8.2f}{p['quantity']}")
+            print(f"{p['id']:<5}{p['name']:<35}{p['category']:<15}RM{p['price']:<8.2f}{p['quantity']}")
 
         # Restrict guest from purchasing
         if current_user_id is None:  # Use global variable
@@ -1269,7 +1272,7 @@ def searchAllEquipmentMenu():
         else:
             userMenu()
 
-def productRecommendation():
+def productComment():
     clear_screen()
     print("\n=== Product Comment ===")
     
@@ -1283,17 +1286,17 @@ def productRecommendation():
         userMenu()
         return
 
-    # Load recommendation data
+    # Load comment data
     try:
-        with open("recommendation.txt", "r") as f:
-            recommendations = []
+        with open("comment.txt", "r") as f:
+            comment = []
             for line in f:
                 parts = line.strip().split(",", 3)  # Split into 4 parts, ensuring the comment is handled
                 if len(parts) == 4:
                     rec_id, user_id, prod_id, comment = parts
-                    recommendations.append((rec_id, user_id, prod_id, comment.strip('"')))  # Remove quotes around comments
+                    comment.append((rec_id, user_id, prod_id, comment.strip('"')))  # Remove quotes around comments
     except FileNotFoundError:
-        print("recommendation.txt not found.")
+        print("comment.txt not found.")
         input("\nPress Enter to return...")
         userMenu()
         return
@@ -1310,14 +1313,14 @@ def productRecommendation():
 
     # Organize comments by product_id
     rec_dict = {}
-    for rec in recommendations:
+    for rec in comment:
         rec_id, user_id, prod_id, comment = rec
         if prod_id not in rec_dict:
             rec_dict[prod_id] = []
         username = users.get(user_id, "Unknown")
         rec_dict[prod_id].append(f"{username}: {comment}")
 
-    # Display all recommendations sorted by product_id
+    # Display all comment  sorted by product_id
     for product in sorted(products, key=lambda x: int(x[0])):
         prod_id, name = product[0], product[1].replace("_", " ")
         if prod_id in rec_dict:
@@ -1394,14 +1397,14 @@ def purchaseHistory():
     input("\nPress Enter to return to the menu...")  # Pause screen
     userMenu()
 
-def provideRecommendation():
+def provideComment():
     clear_screen()
     print("\n=== Provide Product Comment ===")
     
     # Show purchase history
     print("\nYour Purchase History:")
-    print("{:<5} {:<27} {:<12} {}".format("ID", "Product Name", "Purchase Date", "Quantity"))
-    print("-" * 55)
+    print("{:<5} {:<35} {:<15} {}".format("ID", "Product Name", "Purchase Date", "Quantity"))
+    print("-" * 65)
     
     purchases = []
     try:
@@ -1434,7 +1437,7 @@ def provideRecommendation():
 
         # Display purchases
         for idx, purchase in enumerate(purchases, 1):
-            print("{:<5} {:<27} {:<12} {}".format(
+            print("{:<5} {:<35} {:<15} {}".format(
                 purchase["product_id"],
                 purchase["name"],
                 purchase["date"],
@@ -1449,7 +1452,7 @@ def provideRecommendation():
 
     # Get product ID input
     while True:
-        product_id = input("\nEnter product ID to Comment (0 to cancel): ").strip()
+        product_id = input("\nEnter product ID to comment (0 to cancel): ").strip()
         if product_id == "0":
             userMenu()
             return
@@ -1458,23 +1461,25 @@ def provideRecommendation():
         valid_ids = [p["product_id"] for p in purchases]
         if product_id in valid_ids:
             break
-        print("Invalid ID! You can only Comment products you've purchased")
+        print("Invalid ID! You can only comment products you've purchased")
 
     # Get recommendation comment
     comment = input("Enter your comment (max 100 characters): ").strip()[:100]
+    # Get comment
+    comment = input("Enter your comment (max 100 characters): ").strip()[:100]
     
-    # Generate recommendation ID
+    # Generate comment ID
     try:
-        with open("recommendation.txt", "r") as f:
-            recommendations = f.readlines()
-            last_id = int(recommendations[-1].split(",")[0]) if recommendations else 0
+        with open("comment.txt", "r") as f:
+            comment = f.readlines()
+            last_id = int(comment[-1].split(",")[0]) if comment else 0
     except FileNotFoundError:
         last_id = 0
         
     new_id = last_id + 1
 
-    # Save recommendation
-    with open("recommendation.txt", "a") as f:
+    # Save Comment
+    with open("comment.txt", "a") as f:
         f.write(f"{new_id},{current_user_id},{product_id},\"{comment}\"\n")
     
     print("\nComment submitted successfully!")
@@ -1632,7 +1637,7 @@ def searchbyCategoryMenu():
     print("2. Purchase Shuttlecocks")
     print("3. Purchase Badminton Bag")
     print("4. Purchase Racket Grips")
-    print("5. Search Equipment by Racket Comment") #include see all racket Recommendation press 1 as want purchase press 0 back
+    print("5. Search Equipment by Racket Comment") #include see all racket Comment press 1 as want purchase press 0 back
     print("6. Search Equipment by Shuttlecocks Comment")
     print("7. Search Equipment by Badminton Bag Comment")
     print("8. Search Equipment by Racket Grips Comment")
@@ -1648,30 +1653,32 @@ def searchbyCategoryMenu():
     elif choice == "4":
         searchbyRacketGrips()
     elif choice == "5":
-        searchbyRacketRecommendation()
+        searchbyRacketComment()
     elif choice == "6":
-        searchbyShuttlecocksRecommendation()
+        searchbyShuttlecocksComment()
     elif choice == "7":
-        searchbyBadmintonBagRecommendation()
+        searchbyBadmintonBagComment()
     elif choice == "8":
-        searchbyRacketGripsRecommendation()
+        searchbyRacketGripsComment()
     else:
+        print("Invalid choice!")
+        time.sleep(2)
         userMenu()
 
-#sort category product by recommendation
-def searchbyRacketRecommendation():
-    searchByCategoryRecommendation("Racket")
+#sort category product by comment
+def searchbyRacketComment():
+    searchByCategoryComment("Racket")
 
-def searchbyShuttlecocksRecommendation():
-    searchByCategoryRecommendation("Shuttlecocks")
+def searchbyShuttlecocksComment():
+    searchByCategoryComment("Shuttlecocks")
 
-def searchbyBadmintonBagRecommendation():
-    searchByCategoryRecommendation("BadmintonBag")
+def searchbyBadmintonBagComment():
+    searchByCategoryComment("BadmintonBag")
 
-def searchbyRacketGripsRecommendation():
-    searchByCategoryRecommendation("RacketGrips")
+def searchbyRacketGripsComment():
+    searchByCategoryComment("RacketGrips")
 
-def searchByCategoryRecommendation(category):
+def searchByCategoryComment(category):
     clear_screen()
     print(f"\n=== Comment for Category: {category.replace('_', ' ')} ===")
 
@@ -1680,9 +1687,9 @@ def searchByCategoryRecommendation(category):
         with open("products.txt", "r") as f:
             products = [line.strip().split(",") for line in f]
 
-        # Load recommendations
-        with open("recommendation.txt", "r") as f:
-            recommendations = [line.strip().split(",") for line in f]
+        # Load comment
+        with open("comment.txt", "r") as f:
+            comment = [line.strip().split(",") for line in f]
 
         # Load user data
         with open("users.txt", "r") as f:
@@ -1697,16 +1704,16 @@ def searchByCategoryRecommendation(category):
     # Filter products by category
     filtered_products = [p for p in products if p[3] == category]
 
-    # Organize recommendations by product_id
+    # Organize comment by product_id
     rec_dict = {}
-    for rec in recommendations:
+    for rec in comment:
         if len(rec) != 4:
             continue  # Skip malformed lines
         _, user_id, prod_id, comment = rec
         username = users.get(user_id, "Unknown")
         rec_dict.setdefault(prod_id, []).append(f"{username}: {comment}")
 
-    # Display recommendations only for filtered products
+    # Display comment only for filtered products
     for p in filtered_products:
         prod_id, name = p[0], p[1].replace("_", " ")
         if prod_id in rec_dict:
@@ -1731,13 +1738,13 @@ def searchbyRacket():
     searchByCategoryEquipment("Racket")
 
 def searchbyShuttlecocks():
-    searchByCategoryEquipment("Shuttlecocks")
+    searchByCategoryEquipment("Shuttlecock")
 
 def searchbyBadmintonBag():
     searchByCategoryEquipment("BadmintonBag")
 
 def searchbyRacketGrips():
-    searchByCategoryEquipment("RacketGrips")
+    searchByCategoryEquipment("RacketGrip")
 
 from datetime import datetime
 
@@ -1771,9 +1778,9 @@ def searchByCategoryEquipment(category_filter):
 
         # ✅ Show products to everyone (including guests)
         print(f"\nAvailable {category_filter}s:")
-        print(f"{'ID':<5}{'Name':<30}{'Price':<10}Stock")
+        print(f"{'ID':<5}{'Name':<35}{'Price':<10}Stock")
         for p in products:
-            print(f"{p['id']:<5}{p['name']:<30}RM{p['price']:<8.2f}{p['quantity']}")
+            print(f"{p['id']:<5}{p['name']:<35}RM{p['price']:<8.2f}{p['quantity']}")
 
         # ✅ Then block purchase only if guest
         if current_user_id is None:
@@ -1907,7 +1914,7 @@ def userReceipt(purchase_id, purchase_by, total_price, cart):
     input("\nPress Enter to return...")
     userMenu()
 
-#---------------------------------------------------------------
+#--------------------------------------------------------------
 #main menu first page
 def main():
     while True:    
