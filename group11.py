@@ -1065,13 +1065,13 @@ def userMenu():
     clear_screen()
     global current_user
     print("\n===============================================")
-    print("================== 📋User Menu ================")
+    print("================= 📋 User Menu ================")
     print("===============================================")
-    print("1. Search Equipment (All)")
-    print("2. Search Equipment (by category)")
-    print("3. View Product Comment") #by recomandation from Product Recommender(system) no feedback
+    print("1. View All Product")
+    print("2. Search Product (by category)")
+    print("3. View All Product Comment") #by recomandation from Product Recommender(system) no feedback
     print("4. Puchase History")
-    print("5. Give Feeback to Equipment")
+    print("5. Give Feeback to Product")
     print("6. Edit Profile")
     print("7. Delete Account")
     print("8. Logout")
@@ -1105,9 +1105,9 @@ def userMenu():
 def searchAllEquipment():
     clear_screen()
     print("\n==============================================")
-    print("========== Search Equipment (All) ===========")
+    print("============== View All Product ==============")
     print("==============================================")
-    print("1. Search Equipment (All)")
+    print("1. View All Product")
     print("0. Back")
     choice = input("Enter your choice : ")
     if choice == "1":
@@ -1629,7 +1629,7 @@ def deleteAccount():
 def searchbyCategoryMenu():
     clear_screen()
     print("\n=====================================================")
-    print("========== Search Equipment (by category) ===========")
+    print("=========== Search Product (by category) ============")
     print("=====================================================")
     print("1. Search by Racket")
     print("2. Search by Shuttlecocks")
@@ -1898,17 +1898,18 @@ def searchByCategoryEquipment(category_filter):
 
 
 def userReceipt(purchase_id, purchase_by, total_price, cart):
-    print("\n" + "=" * 40)
-    print("\t\tRECEIPT")
-    print("=" * 40)
+    print("\n" + "=" * 45)
+    print("\t\t   RECEIPT")
+    print("=" * 45)
     print(f"Username     : {current_user}")
     print(f"Pay by       : {purchase_by}")
-    print(f"{'Product':<30}{'Qty':<5}")
+    print(f"{'Product':<40}{'Qty':<10}")
     for item in cart:
-        print(f"{item['product']['name']:<30}{item['qty']:<5}")
-    print("-" * 40)
+        print(f"{item['product']['name']:<40}{item['qty']:<102
+        }")
+    print("-" * 45)
     print(f"Total        : RM{total_price:.2f}")
-    print("=" * 40)
+    print("=" * 45)
     input("\nPress Enter to return...")
     userMenu()
 
