@@ -92,13 +92,24 @@ def getNextUserId():
     except FileNotFoundError:
         return 1
 
+
 def register(username, password):
+    global current_user, current_user_id
+
     user_id = getNextUserId()
+    
     with open("users.txt", "a", newline="\n") as file:
         file.write(f"{user_id},{username},{password}\n")
+    
     print("\nAccount created successfully")
     time.sleep(2)
+
+    # Set current user info
+    current_user = username
+    current_user_id = user_id
+
     userMenu()
+
 
 
 def userLogin(): #user Login
