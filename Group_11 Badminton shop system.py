@@ -317,7 +317,7 @@ def superadminMenu():
     print("| 2. Edit Equipment                  |")
     print("| 3. Delete Equipment                |")
     print("| 4. View Equipment                  |")
-    print("| 5. Product Recommendation          |")
+    print("| 5. Product comment                 |")
     print("+------------------------------------+")
     print("| User                               |")
     print("+------------------------------------+")
@@ -383,7 +383,7 @@ def adminMenu():
     print("| 2. Edit Equipment                  |")
     print("| 3. Delete Equipment                |")
     print("| 4. View Equipment                  |")
-    print("| 5. Product Recommendation          |")
+    print("| 5. Product Comment                 |")
     print("+------------------------------------+")
     print("| Another option                     |")
     print("+------------------------------------+")
@@ -672,7 +672,7 @@ def viewEquipment():
         adminMenu()
 
 def viewAllRecommendations():
-    print("\n===== All Product Recommendations =====\n")
+    print("\n===== All Product comment =====\n")
 
     # Load user_id → username
     user_map = {}
@@ -1067,9 +1067,9 @@ def userMenu():
     print("===============================================")
     print("1. Search Equipment (All)")
     print("2. Search Equipment (by category)")
-    print("3. Product Recommendation") #by recomandation from Product Recommender(system) no feedback
+    print("3. Product Comment") #by recomandation from Product Recommender(system) no feedback
     print("4. Puchase History")
-    print("5. Provide recomandation")
+    print("5. Provide Comment")
     print("6. Edit Profile")
     print("7. Delete Account")
     print("8. Logout")
@@ -1271,7 +1271,7 @@ def searchAllEquipmentMenu():
 
 def productRecommendation():
     clear_screen()
-    print("\n=== Product Recommendations ===")
+    print("\n=== Product Comment ===")
     
     # Load product data
     try:
@@ -1396,7 +1396,7 @@ def purchaseHistory():
 
 def provideRecommendation():
     clear_screen()
-    print("\n=== Provide Product Recommendation ===")
+    print("\n=== Provide Product Comment ===")
     
     # Show purchase history
     print("\nYour Purchase History:")
@@ -1449,7 +1449,7 @@ def provideRecommendation():
 
     # Get product ID input
     while True:
-        product_id = input("\nEnter product ID to recommend (0 to cancel): ").strip()
+        product_id = input("\nEnter product ID to Comment (0 to cancel): ").strip()
         if product_id == "0":
             userMenu()
             return
@@ -1458,10 +1458,10 @@ def provideRecommendation():
         valid_ids = [p["product_id"] for p in purchases]
         if product_id in valid_ids:
             break
-        print("Invalid ID! You can only recommend products you've purchased")
+        print("Invalid ID! You can only Comment products you've purchased")
 
     # Get recommendation comment
-    comment = input("Enter your recommendation (max 100 characters): ").strip()[:100]
+    comment = input("Enter your comment (max 100 characters): ").strip()[:100]
     
     # Generate recommendation ID
     try:
@@ -1477,7 +1477,7 @@ def provideRecommendation():
     with open("recommendation.txt", "a") as f:
         f.write(f"{new_id},{current_user_id},{product_id},\"{comment}\"\n")
     
-    print("\nRecommendation submitted successfully!")
+    print("\nComment submitted successfully!")
     time.sleep(2)
     userMenu()
 
@@ -1632,10 +1632,10 @@ def searchbyCategoryMenu():
     print("2. Purchase Shuttlecocks")
     print("3. Purchase Badminton Bag")
     print("4. Purchase Racket Grips")
-    print("5. Search Equipment by Racket Recommendation") #include see all racket Recommendation press 1 as want purchase press 0 back
-    print("6. Search Equipment by Shuttlecocks Recommendation")
-    print("7. Search Equipment by Badminton Bag Recommendation")
-    print("8. Search Equipment by Racket GripsRecommendation")
+    print("5. Search Equipment by Racket Comment") #include see all racket Recommendation press 1 as want purchase press 0 back
+    print("6. Search Equipment by Shuttlecocks Comment")
+    print("7. Search Equipment by Badminton Bag Comment")
+    print("8. Search Equipment by Racket Grips Comment")
     
     print("0. Back")
     choice = input("\nEnter your choice : ")
@@ -1673,7 +1673,7 @@ def searchbyRacketGripsRecommendation():
 
 def searchByCategoryRecommendation(category):
     clear_screen()
-    print(f"\n=== Recommendations for Category: {category.replace('_', ' ')} ===")
+    print(f"\n=== Comment for Category: {category.replace('_', ' ')} ===")
 
     try:
         # Load products
