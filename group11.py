@@ -1,8 +1,6 @@
 import os
 import time
 
-import os
-
 def clear_screen():
     os.system('cls') 
 
@@ -96,21 +94,23 @@ def getNextUserId():
 def register(username, password):
     global current_user, current_user_id
 
+    if "," in username or "," in password:
+        print("Error: Username or password cannot contain commas.")
+        time.sleep(2)
+        return
+
     user_id = getNextUserId()
-    
+
     with open("users.txt", "a", newline="\n") as file:
         file.write(f"{user_id},{username},{password}\n")
-    
-    print("\nAccount created successfully")
+
+    print("\nAccount created successfully!")
     time.sleep(2)
 
-    # Set current user info
     current_user = username
     current_user_id = user_id
 
     userMenu()
-
-
 
 def userLogin(): #user Login
     clear_screen()
@@ -1315,7 +1315,7 @@ def productRecommendation():
     # Load user data
     try:
         with open("users.txt", "r") as f:
-            users = {u[0]: u[1] for u in (line.strip().split(",") for line in f)}
+            users = {u[0]: u[1] for u in (line.strip().split(",") for line in f if line.strip())}
     except FileNotFoundError:
         print("users.txt not found.")
         input("\nPress Enter to return...")
@@ -1958,4 +1958,5 @@ def main():
             break
         else:
             print("Invalid choice")
+
 main()
