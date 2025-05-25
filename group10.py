@@ -1061,7 +1061,7 @@ def aboutUs():
     print("==============================================")
     print("================== About Us ==================")
     print("==============================================")
-    print("Group 11 Badminton Sport Equipment System")
+    print("Group 10 Badminton Sport Equipment System")
     print("1. Chan Jun Yu    (1221208634)")
     print("2. Hwang Yong Jin (1221207893)")
     print("3. Soh Yong Seng  (1221207836)")
